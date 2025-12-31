@@ -21,7 +21,7 @@ import BrowserNotSupported from "./ui/BrowserNotSupported";
 const EXPRESSIVE_VOICES = ["ash", "ballad", "coral", "sage", "verse"];
 
 export default function TtsPage() {
-  const [devMode] = useState(false);
+  const [devMode, setDevMode] = useState(false);
   const isScrollable = useBodyScrollable();
 
   return (
@@ -29,7 +29,7 @@ export default function TtsPage() {
       data-scrollable={isScrollable}
       className="flex flex-col gap-x-3 min-h-screen px-5 pt-6 pb-32 md:pb-24 selection:bg-primary/20"
     >
-      <Header />
+      <Header devMode={devMode} setDevMode={setDevMode} />
       {devMode ? <DevMode /> : <Board />}
       <Footer devMode={devMode} />
     </div>

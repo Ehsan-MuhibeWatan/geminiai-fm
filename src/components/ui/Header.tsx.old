@@ -1,0 +1,66 @@
+import { useAudioClip } from "@/hooks/useAudioClip";
+import clsx from "clsx";
+
+export const Header = () => {
+  const playToggle = useAudioClip("/click.wav");
+
+  return (
+    <header className="flex w-full max-w-(--page-max-width) mx-auto mb-12 md:mb-8">
+      <div className="grid grid-cols-12 gap-x-3">
+        {/* LOGO */}
+        <div className="col-span-2 order-1 mb-8 md:mb-0">
+          <div
+            className={clsx("relative top-[0.0875rem] cursor-pointer")}
+            onClick={() => {
+              playToggle();
+            }}
+          >
+            <Logo />
+          </div>
+        </div>
+
+        {/* YOUTUBE SUPPORT MESSAGE */}
+        <div className="col-span-12 md:col-span-10 xl:col-span-10 order-3 md:order-2">
+          <div className="text-balance">
+            <div className="text-current/80 mb-2 font-medium">
+              This live demo runs on a paid API for educational purposes.
+            </div>
+
+            <div className="text-current/70 mb-4">
+              If you are using this service, please support the work by watching,
+              subscribing, and sharing the YouTube tutorial.
+              <br />
+              <strong>Your watch time helps keep this demo online.</strong>
+            </div>
+
+            <a
+              href="https://www.youtube.com/@muhibb-e-watan"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="uppercase inline-block font-semibold text-red-600 hover:text-red-500 transition-colors"
+            >
+              ▶ Support on YouTube (Watch • Subscribe • Share)
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+const Logo = () => {
+  return (
+    <svg
+      width="91"
+      height="18"
+      viewBox="0 0 91 18"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M75.6426 13.5056V4.13491H78.4612V5.23624C78.9279 4.45224 79.8799 3.94824 81.0559 3.94824C82.2879 3.94824 83.3146 4.47091 83.9119 5.51624C84.5466 4.54557 85.6666 3.94824 86.9359 3.94824C89.0826 3.94824 90.6319 5.49757 90.6319 7.81224V13.5056H87.8133V8.26091C87.8133 7.12224 87.2906 6.33757 86.1893 6.33757C85.1253 6.33757 84.5466 7.12224 84.5466 8.26091V13.5056H81.728V8.26091C81.728 7.12224 81.2053 6.33757 80.104 6.33757C79.04 6.33757 78.4612 7.12224 78.4612 8.26091V13.5056H75.6426Z" />
+      <path d="M60.0059 13.5061V0.439453H62.9179V13.5061H60.0059Z" />
+      <path d="M45.4473 13.5061L50.6553 0.439453H54.0526L59.1113 13.5061H56.0313L55.0046 10.7435H49.5166L48.4713 13.5061H45.4473Z" />
+      <path d="M7.00989 13.6929C3.40723 13.6929 0.476562 10.6876 0.476562 6.97293C0.476562 3.25826 3.40723 0.25293 7.00989 0.25293C10.6126 0.25293 13.5432 3.25826 13.5432 6.97293C13.5432 10.6876 10.6126 13.6929 7.00989 13.6929Z" />
+    </svg>
+  );
+};

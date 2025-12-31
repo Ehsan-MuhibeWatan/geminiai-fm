@@ -58,7 +58,33 @@ export default function RootLayout({
           `}
         </Script>
       </head>
+
       <body className={clsx("antialiased", jetBrainsMono.className)}>
+        {/* COMMUNITY NOTICE BANNER */}
+        <div
+          style={{
+            background: "#FEF3C7",
+            borderBottom: "1px solid #F59E0B",
+            padding: "10px",
+            fontSize: "14px",
+            color: "#92400E",
+          }}
+        >
+          <strong>⚠️ Community Notice:</strong>
+          <br />
+          This is a live demo running on a paid API and usage is actively monitored.
+          If this tool helps you, support the work by liking, subscribing, and sharing the tutorial.
+          Public access may be restricted or disabled without notice.
+          <br />
+          <br />
+          <strong>⚠️ Community Notice:</strong>
+          <br />
+          Yeh ek live demo hai jo paid API par chal raha hai aur usage monitor ho rahi hai.
+          Agar yeh tool aap ke kaam ka hai, to video ko like karein, subscribe karein aur share karein.
+          Public access bina notice ke band bhi kiya ja sakta hai.
+        </div>
+
+        {/* APP CONTENT */}
         {children}
       </body>
     </html>
