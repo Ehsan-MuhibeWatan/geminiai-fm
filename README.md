@@ -1,4 +1,4 @@
-# 🎙️ GeminiAI-FM (The "Dirty" Fast Engine)
+# 🎙️ GeminiAI-FM (The Smart Fast Engine)
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 ![NextJS](https://img.shields.io/badge/Built_with-NextJS-blue)
@@ -9,17 +9,17 @@
 ![App Screenshot](./screenshot.png)
 
 ## ⚡ What is this?
-**GeminiAI-FM** is a "Growth-Hacking" optimized text-to-speech engine.
+**GeminiAI-FM** is a performance-optimized text-to-speech engine.
 
-The original OpenAI version is amazing but costs money per request. We ripped out the paid engine and replaced it with **Google Gemini 2.0 Flash** (for text processing) and **Google Cloud Neural2 TTS** (for audio).
+The original OpenAI version is amazing but costs money per request. We replaced the paid engine with **Google Gemini 2.0 Flash** (for text processing) and **Google Cloud Neural2 TTS** (for audio).
 
 **The Result?** A high-quality, human-like voice engine that runs effectively **FREE** for personal use and scaling.
 
-### 🔥 Key Features ("The Dirty Bits")
-- **💰 Zero Cost Engine:** Switched from OpenAI API to Google Cloud (Free Tier friendly).
-- **🇵🇰 Urdu/Hindi Optimized:** Fixed crashes with Asian languages by enforcing specific Neural2 voice mapping.
-- **🌑 Dark Mode Only:** Because light mode attracts bugs.
-- **🎣 Growth Hooks:** Pre-built "Scarcity Banners" and "Affiliate Slots" (Mic, Hosting, Support) to help you monetize traffic immediately.
+### 🔥 Key Features ("Smart Optimizations")
+- **💰 Cost Efficient:** Switched from OpenAI API to Google Cloud (Free Tier friendly).
+- **🇵🇰 Urdu/Hindi Support:** Fixed crashes with Asian languages by enforcing specific Neural2 voice mapping.
+- **🌑 Dark Mode Only:** Optimized for visual comfort and battery life.
+- **📈 Engagement Tools:** Pre-built "Live Demo" banners and "Affiliate Slots" (Mic, Hosting, Support) to help you monetize traffic.
 - **📱 Responsive:** Fixed button sizing and layout issues for mobile devices.
 
 ---
@@ -29,6 +29,7 @@ The original OpenAI version is amazing but costs money per request. We ripped ou
 ### 1. Clone the Repository
 ```bash
 git clone [https://github.com/Ehsan-MuhibeWatan/geminiai-fm.git](https://github.com/Ehsan-MuhibeWatan/geminiai-fm.git)
+
 cd geminiai-fm
 
 2. Install Dependencies
