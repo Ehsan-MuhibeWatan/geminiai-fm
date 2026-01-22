@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Download } from "./ui/Icons";
 import { Button } from "./ui/Button";
 import { appStore } from "@/lib/store";
+import { safeUUID } from "@/lib/safeUUID";
+
+const isTutorial = process.env.NEXT_PUBLIC_APP_MODE === "tutorial";
 
 const PlayingWaveform = ({
   audioLoaded,
@@ -19,11 +22,7 @@ const PlayingWaveform = ({
           className={`w-[2px] bg-white transition-all duration-150 rounded-[2px] absolute top-1/2 -translate-y-1/2 ${
             audioLoaded ? "opacity-100" : "animate-wave"
           }`}
-          style={{
-            height,
-            animationDelay: `${idx * 0.15}s`,
-            left: `${idx * 6}px`,
-          }}
+          style={{ height, animationDelay: `${idx * 0.15}s`, left: `${idx * 6}px` }}
         />
       );
     })}
@@ -31,7 +30,7 @@ const PlayingWaveform = ({
 );
 
 const IS_CHROME =
-  // @ts-expect-error - it's a safe reach
+  // @ts-expect-error - safe reach
   navigator.userAgentData?.brands?.some(
     (b: { brand: string }) => b.brand === "Google Chrome"
   ) === true;
@@ -43,7 +42,6 @@ export default function DownloadButton() {
 
   useEffect(() => {
     if (!latestAudioUrl) return;
-
     let objectUrl = "";
     const handler = (e: MessageEvent) => {
       if (e.data.type === "ADD_TO_CACHE" && e.data.url === latestAudioUrl) {
@@ -51,8 +49,9 @@ export default function DownloadButton() {
         setDataUrl(objectUrl);
       }
     };
-    navigator.serviceWorker.addEventListener("message", handler);
-
+    if (!isTutorial && "serviceWorker" in navigator && navigator.serviceWorker) {
+      navigator.serviceWorker.addEventListener("message", handler);
+    }
     return () => {
       setDataUrl(null);
       URL.revokeObjectURL(objectUrl);
@@ -63,26 +62,16 @@ export default function DownloadButton() {
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker
-        // update file name when updating the service worker to avoid cache issues
+        // ✅ REVERTED TO ORIGINAL FILENAME TO FIX 404
         .register("/worker-444eae9e2e1bdd6edd8969f319655e70.js")
         .catch((err) => console.error("SW registration failed", err));
     }
   }, []);
 
   const handleDownload = async () => {
-    const {
-      selectedEntry,
-      input,
-      prompt,
-      voice,
-      latestAudioUrl: storeUrl,
-    } = appStore.getState();
-
-    const vibe =
-      selectedEntry?.name.toLowerCase().replace(/ /g, "-") ?? "audio";
-
+    const { selectedEntry, input, prompt, voice, latestAudioUrl: storeUrl } = appStore.getState();
+    const vibe = selectedEntry?.name.toLowerCase().replace(/ /g, "-") ?? "audio";
     const filename = `openai-fm-${voice}-${vibe}.${IS_CHROME ? "wav" : "mp3"}`;
-
 
     if (!storeUrl) {
       setLoading(true);
@@ -90,7 +79,7 @@ export default function DownloadButton() {
       form.append("input", input);
       form.append("prompt", prompt);
       form.append("voice", voice);
-      form.append("generation", crypto.randomUUID());
+      form.append("generation", safeUUID());
       form.append("vibe", vibe);
 
       const res = await fetch("/api/generate", { method: "POST", body: form });
@@ -121,7 +110,9 @@ export default function DownloadButton() {
           setLoading(false);
         }
       };
-      navigator.serviceWorker.addEventListener("message", handler);
+      if (!isTutorial && "serviceWorker" in navigator && navigator.serviceWorker) {
+        navigator.serviceWorker.addEventListener("message", handler);
+      }
       return;
     }
 
@@ -134,16 +125,24 @@ export default function DownloadButton() {
   };
 
   return (
-    <Button color="tertiary" onClick={handleDownload} disabled={loading}>
+    <Button
+      color="tertiary"
+      onClick={handleDownload}
+      disabled={loading}
+      // ⬛ DARK BACKGROUND, ⬜ WHITE TEXT (Forced)
+      style={{ backgroundColor: '#1f2937', color: '#ffffff', border: '1px solid #374151' }}
+    >
       {loading ? (
         <PlayingWaveform
           audioLoaded={false}
           amplitudeLevels={[0.04, 0.04, 0.04, 0.04, 0.04]}
         />
       ) : (
-        <Download />
-      )}{" "}
-      <span className="uppercase hidden md:inline pr-3">Download</span>
+        <span style={{ color: 'white' }}><Download /></span>
+      )}
+      <span className="uppercase inline pr-3 text-white" style={{ color: 'white', fontWeight: 'bold' }}>
+        Download
+      </span>
     </Button>
   );
 }

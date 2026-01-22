@@ -40,3 +40,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# --- SECURITY & SENSITIVE FILES ---
+# Ignore all JSONs to be safe, but allow the critical ones
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!.eslintrc.json
+
+# Explicitly ignore the Key (Just to be 100% sure)
+service-account-key.json

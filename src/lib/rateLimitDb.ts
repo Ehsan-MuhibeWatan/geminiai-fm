@@ -34,7 +34,7 @@ export function canUseAPI(ip: string): boolean {
     return true;
   }
 
-  if (row.count >= 5) return false;
+  if (row.count >= 500) return false;
 
   return true;
 }

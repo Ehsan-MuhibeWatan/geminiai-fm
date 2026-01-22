@@ -10,8 +10,15 @@ const jetBrainsMono = JetBrains_Mono({
   preload: true,
 });
 
+// Public environment config (SAFE)
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
+const enableGA =
+  process.env.NEXT_PUBLIC_ENABLE_GA === "true";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.openai.fm"),
+  metadataBase: new URL(siteUrl),
   title: "OpenAI.fm",
   description:
     "An interactive demo for developers to try the new text-to-speech model in the OpenAI API",
@@ -36,27 +43,31 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <head>
-        {/* Google Analytics */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-YVZ3QD0WH8"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-YVZ3QD0WH8', {
-              anonymize_ip: true
-            });
-          `}
-        </Script>
+        {/* Google Analytics (production only) */}
+        {enableGA && (
+          <>
+            <Script
+              src="https://www.googletagmanager.com/gtag/js?id=G-YVZ3QD0WH8"
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-YVZ3QD0WH8', {
+                  anonymize_ip: true
+                });
+              `}
+            </Script>
+          </>
+        )}
       </head>
       <body className={clsx("antialiased", jetBrainsMono.className)}>
         {children}

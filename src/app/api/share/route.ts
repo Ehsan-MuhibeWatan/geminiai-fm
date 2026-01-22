@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { sql } from "@vercel/postgres";
 import { MAX_PROMPT_LENGTH, MAX_INPUT_LENGTH } from "../generate/route";
+import { safeUUID } from "@/lib/safeUUID";
 
 // Saves shared links to the database
 export async function POST(req: NextRequest) {
@@ -8,7 +9,7 @@ export async function POST(req: NextRequest) {
     const { input, prompt, voice } = await req.json();
     const clippedInput = input.slice(0, MAX_INPUT_LENGTH);
     const clippedPrompt = prompt.slice(0, MAX_PROMPT_LENGTH);
-    const id = crypto.randomUUID();
+    const id = safeUUID();
     await sql`INSERT INTO shares (id, input, prompt, voice) VALUES (${id}, ${
       clippedInput ?? ""
     }, ${clippedPrompt ?? ""}, ${voice ?? ""});`;

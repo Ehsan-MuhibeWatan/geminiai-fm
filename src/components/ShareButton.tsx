@@ -10,15 +10,13 @@ export const ShareButton = () => {
   const { copied, trigger } = useCopiedDelay();
   const [open, setOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
+
   const handleShare = async () => {
     const { input, prompt, voice } = appStore.getState();
-
     try {
       const res = await fetch("/api/share", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ input, prompt, voice }),
       });
       if (!res.ok) {
@@ -28,7 +26,6 @@ export const ShareButton = () => {
       const data = await res.json();
       const hash = data.id;
       const shareUrl = `${window.location.origin}${window.location.pathname}#${hash}`;
-      // Copy share URL to clipboard to share with others.
       await copyText(shareUrl);
       setShareUrl(shareUrl);
       setOpen(true);
@@ -47,10 +44,14 @@ export const ShareButton = () => {
           trigger();
           handleShare();
         }}
+        // ⬛ DARK BACKGROUND, ⬜ WHITE TEXT (Forced)
+        style={{ backgroundColor: '#1f2937', color: '#ffffff', border: '1px solid #374151' }}
       >
         <span className="flex gap-2 items-center justify-center">
-          <Share />
-          <span className="uppercase hidden md:inline pr-3">Share</span>
+          <span style={{ color: 'white' }}><Share /></span>
+          <span className="uppercase inline pr-3 text-white" style={{ color: 'white', fontWeight: 'bold' }}>
+            Share
+          </span>
         </span>
       </Button>
       <ShareDialog shareUrl={shareUrl} open={open} onOpenChange={setOpen} />

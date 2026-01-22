@@ -1,90 +1,87 @@
-# OpenAI.fm
+# 🎙️ GeminiAI-FM (The "Dirty" Fast Engine)
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 ![NextJS](https://img.shields.io/badge/Built_with-NextJS-blue)
-![OpenAI API](https://img.shields.io/badge/Powered_by-OpenAI_API-orange)
+![Google Cloud](https://img.shields.io/badge/Powered_by-Google_Gemini_%26_Neural2-orange)
 
-[OpenAI.fm](https://openai.fm) is an interactive demo to showcase the new OpenAI text-to-speech models.
-It is built with NextJS and the [Speech API](https://platform.openai.com/docs/api-reference/audio/createSpeech).
+> **Unlimited Free Text-to-Speech. Zero Cost. Pure Vibe.** > *Forked from OpenAI-FM, re-engineered to run on Google Cloud's Free Tier.*
 
-For more information about text-to-speech using the OpenAI API, check out our [documentation](https://platform.openai.com/docs/guides/text-to-speech).
+![App Screenshot](./screenshot.png)
 
-![screenshot](./public/screenshot.jpg)
+## ⚡ What is this?
+**GeminiAI-FM** is a "Growth-Hacking" optimized text-to-speech engine.
 
-## How to run
+The original OpenAI version is amazing but costs money per request. We ripped out the paid engine and replaced it with **Google Gemini 2.0 Flash** (for text processing) and **Google Cloud Neural2 TTS** (for audio).
 
-1. **Set up the OpenAI API:**
+**The Result?** A high-quality, human-like voice engine that runs effectively **FREE** for personal use and scaling.
 
-   - If you're new to the OpenAI API, [sign up for an account](https://platform.openai.com/signup).
-   - Follow the [Quickstart](https://platform.openai.com/docs/quickstart) to retrieve your API key.
+### 🔥 Key Features ("The Dirty Bits")
+- **💰 Zero Cost Engine:** Switched from OpenAI API to Google Cloud (Free Tier friendly).
+- **🇵🇰 Urdu/Hindi Optimized:** Fixed crashes with Asian languages by enforcing specific Neural2 voice mapping.
+- **🌑 Dark Mode Only:** Because light mode attracts bugs.
+- **🎣 Growth Hooks:** Pre-built "Scarcity Banners" and "Affiliate Slots" (Mic, Hosting, Support) to help you monetize traffic immediately.
+- **📱 Responsive:** Fixed button sizing and layout issues for mobile devices.
 
-2. **Clone the Repository:**
+---
 
-   ```bash
-   git clone https://github.com/openai/openai-fm.git
-   ```
+## 🛠️ How to Run (The Setup)
 
-3. **Set the OpenAI API key:**
+### 1. Clone the Repository
+```bash
+git clone [https://github.com/Ehsan-MuhibeWatan/geminiai-fm.git](https://github.com/Ehsan-MuhibeWatan/geminiai-fm.git)
+cd geminiai-fm
 
-   2 options:
+2. Install Dependencies
+npm install
 
-   - Set the `OPENAI_API_KEY` environment variable [globally in your system](https://platform.openai.com/docs/libraries#create-and-export-an-api-key)
-   - Set the `OPENAI_API_KEY` environment variable in the project: Create a `.env` file at the root of the project and add the following line (see `.env.example` for reference):
+3. Setup Google Cloud (The Engine)
+This app requires a Google Cloud Service Account key to talk to Gemini and TTS APIs.
 
-   ```bash
-   OPENAI_API_KEY=<your_api_key>
-   ```
+Go to the Google Cloud Console.
 
-4. **Install dependencies:**
+Create a new project.
 
-   Run in the project root:
+Enable APIs: Search for and enable "Cloud Text-to-Speech API" and "Vertex AI API".
 
-   ```bash
-   npm install
-   ```
+Create Credentials:
 
-5. **(Optional) Connect to a hosted database:**
+Go to "IAM & Admin" > "Service Accounts".
 
-   If you want to use the sharing feature, you need to connect to a hosted postgres database.
-   You should set the environment variables in a `.env` file at the root of the project to connect to your database as shown in `.env.example`.
+Create a Service Account and give it "Owner" or "Editor" permissions (for simplicity).
 
-   ```bash
-   POSTGRES_URL="postgresql://username:password@host:port/database_name"
-   ```
+Go to the "Keys" tab > "Add Key" > "Create new key" > JSON.
 
-   This step is not needed to run the application and only affects the sharing feature.
+Download & Move:
 
-6. **Run the app:**
+A .json file will download. Rename it to service-account-key.json.
 
-   ```bash
-   npm run dev
-   ```
+Move this file to the root folder of this project.
 
-   The app will be available at [`http://localhost:3000`](http://localhost:3000).
+⚠️ IMPORTANT: Ensure this file is in your .gitignore so you don't leak it!
 
-> [!NOTE]  
-> Be aware that if you deploy this app to a public server, you are responsible for any usage it may incur using your OpenAI API key.
+4. Environment Variables
+Create a .env.local file in the root directory (or rename .env.example):
 
-## Contributors
+# Get this from Google AI Studio or use Vertex AI default
+GOOGLE_API_KEY=your_gemini_api_key_here
 
-### OpenAI team
+# (Optional) For the sharing feature
+POSTGRES_URL="postgresql://username:password@host:port/database_name"
 
-- [Tyler Smith](https://github.com/tylersmith-openai)
-- [Karolis Kosas](https://github.com/karoliskosas)
-- [Justin Jay Wang](https://github.com/justinjaywang)
-- [Bobby Stocker](https://github.com/stocker-openai)
-- [Jeff Harris](https://github.com/jeffsharris)
-- [Romain Huet](https://github.com/romainhuet)
-- [David Weedon](https://github.com/weedon-openai)
-- [Iaroslav Tverdokhlib](https://github.com/itv-openai)
-- [Adam Walker](https://github.com/awalker-openai)
-- [Edwin Arbus](https://x.com/edwinarbus)
-- [Katia Gil Guzman](https://github.com/katia-openai)
+5. Run the App
+npm run dev
 
-### Contributing
+⚠️ "The Trap" & Customization
+This engine comes with a "Live Demo" warning banner in the header and Affiliate Links in the footer by default.
 
-You are welcome to open issues or submit PRs to improve this app, however, please note that we may not review all suggestions.
+You can edit the text in src/components/ui/Header.tsx.
 
-## License
+You can change affiliate links in src/components/TTSPage.tsx.
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+🤝 Credits
+Original Architecture: OpenAI-FM Team (Huge respect for the base UI).
+
+Re-Engineered by: Muhib-e-Watan Initiative.
+
+📄 License
+This project is licensed under the MIT License. Feel free to fork, modify, and monetize.

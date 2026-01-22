@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { safeUUID } from "@/lib/safeUUID";
 /**
  * Middleware that:
  * 1. Generates a one‑time nonce for this request,
@@ -8,8 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
  */
 export function middleware(request: NextRequest) {
   // 1. Create a unique, Base64‑encoded value for this request
-  const nonce = btoa(crypto.randomUUID());
-
+  const nonce = btoa(safeUUID());
   // 2. Build a strict Content Security Policy (CSP) using that nonce
   const cspHeader = `
     default-src 'self';

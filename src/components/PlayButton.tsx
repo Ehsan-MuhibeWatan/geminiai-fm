@@ -1,12 +1,15 @@
+// ... imports same as before ...
 import React, { useState, useRef } from "react";
 import { Play } from "./ui/Icons";
 import { Button } from "./ui/Button";
 import { appStore } from "@/lib/store";
+import { safeUUID } from "@/lib/safeUUID";
 import s from "./ui/Footer.module.css";
 
 const IS_SAFARI = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
+// ... PlayingWaveform same as before ...
 const PlayingWaveform = ({
   audioLoaded,
   amplitudeLevels,
@@ -23,11 +26,7 @@ const PlayingWaveform = ({
           className={`w-[2px] bg-white transition-all duration-150 rounded-[2px] absolute top-1/2 -translate-y-1/2 ${
             audioLoaded ? "opacity-100" : s["animate-wave"]
           }`}
-          style={{
-            height,
-            animationDelay: `${idx * 0.15}s`,
-            left: `${idx * 6}px`,
-          }}
+          style={{ height, animationDelay: `${idx * 0.15}s`, left: `${idx * 6}px` }}
         />
       );
     })}
@@ -42,23 +41,19 @@ export default function PlayButton() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
-  const [amplitudeLevels, setAmplitudeLevels] = useState<number[]>(
-    new Array(5).fill(0)
-  );
+  const [amplitudeLevels, setAmplitudeLevels] = useState<number[]>(new Array(5).fill(0));
   const amplitudeIntervalRef = useRef<number | null>(null);
   const useStaticAnimation = IS_SAFARI || IS_IOS;
 
   const generateRandomAmplitudes = () =>
-    Array(5)
-      .fill(0)
-      .map(() => Math.random() * 0.06);
+    Array(5).fill(0).map(() => Math.random() * 0.06);
 
   const handleSubmit = async () => {
+    // ... logic same as before ...
     const { input, prompt, voice } = appStore.getState();
 
     if (audioLoading) return;
 
-    // toggle off if already playing
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();
@@ -81,21 +76,18 @@ export default function PlayButton() {
       url.searchParams.append("input", input);
       url.searchParams.append("prompt", prompt);
       url.searchParams.append("voice", voice);
-      url.searchParams.append("generation", crypto.randomUUID());
+      url.searchParams.append("generation", safeUUID());
       const audioUrl = url.toString();
       appStore.setState({ latestAudioUrl: audioUrl });
 
-      // reset any old sampler
       if (amplitudeIntervalRef.current !== null) {
         clearInterval(amplitudeIntervalRef.current);
         amplitudeIntervalRef.current = null;
       }
-
       const audio = new Audio();
       audio.preload = "none";
       audioRef.current = audio;
 
-      // for non‑iOS/Safari, hook up WebAudio analyzer
       if (!useStaticAnimation) {
         if (!audioContextRef.current) {
           audioContextRef.current = new AudioContext();
@@ -117,9 +109,7 @@ export default function PlayButton() {
         if (!analyserRef.current) return;
         const data = new Uint8Array(analyserRef.current.fftSize);
         analyserRef.current.getByteTimeDomainData(data);
-        const avg =
-          data.reduce((sum, v) => sum + Math.abs(v - 128), 0) /
-          analyserRef.current.fftSize;
+        const avg = data.reduce((sum, v) => sum + Math.abs(v - 128), 0) / analyserRef.current.fftSize;
         const amp = avg / 128;
         setAmplitudeLevels((prev) => [...prev.slice(1), amp]);
       };
@@ -165,6 +155,8 @@ export default function PlayButton() {
       onClick={handleSubmit}
       selected={audioLoading || isPlaying}
       className="relative"
+      // 🟧 ORANGE BACKGROUND (Default), ⬜ WHITE TEXT (Forced)
+      style={{ color: '#ffffff' }}
     >
       {isPlaying ? (
         <PlayingWaveform
@@ -177,9 +169,9 @@ export default function PlayButton() {
           amplitudeLevels={[0.032, 0.032, 0.032, 0.032, 0.032]}
         />
       ) : (
-        <Play />
+        <span style={{ color: 'white' }}><Play /></span>
       )}
-      <span className="uppercase hidden md:inline pr-3">
+      <span className="uppercase inline pr-3 text-white" style={{ color: 'white', fontWeight: 'bold' }}>
         {isPlaying ? "Stop" : audioLoading ? "Busy" : "Play"}
       </span>
     </Button>

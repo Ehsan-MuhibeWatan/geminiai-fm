@@ -1,5 +1,7 @@
 // hooks/useServiceWorker.ts
 import { useEffect, useRef, useState } from "react";
+const isTutorial =
+  process.env.NEXT_PUBLIC_APP_MODE === "tutorial";
 
 export interface SWMessage {
   type: string;
@@ -36,7 +38,13 @@ export function useServiceWorker(scriptURL: string) {
       messageHandlers.current.forEach((handler) => handler(data));
     }
 
-    navigator.serviceWorker.addEventListener("message", onMessage);
+if (
+  !isTutorial &&
+  "serviceWorker" in navigator &&
+  navigator.serviceWorker
+) {
+  navigator.serviceWorker.addEventListener("message", onMessage);
+}
     return () => {
       navigator.serviceWorker.removeEventListener("message", onMessage);
     };
