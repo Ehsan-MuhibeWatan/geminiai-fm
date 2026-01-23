@@ -1,15 +1,16 @@
-// ... imports same as before ...
+"use client";
 import React, { useState, useRef } from "react";
-import { Play } from "./ui/Icons";
 import { Button } from "./ui/Button";
+import { Play } from "./ui/Icons";
 import { appStore } from "@/lib/store";
-import { safeUUID } from "@/lib/safeUUID";
 import s from "./ui/Footer.module.css";
 
-const IS_SAFARI = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+const IS_SAFARI = typeof navigator !== "undefined" && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+const IS_IOS = typeof navigator !== "undefined" && /iPad|iPhone|iPod/.test(navigator.userAgent);
 
-// ... PlayingWaveform same as before ...
+/* =======================
+   Waveform Component
+   ======================= */
 const PlayingWaveform = ({
   audioLoaded,
   amplitudeLevels,
@@ -41,64 +42,85 @@ export default function PlayButton() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
+  
+  // Use state for amplitudes to drive the visualization
   const [amplitudeLevels, setAmplitudeLevels] = useState<number[]>(new Array(5).fill(0));
   const amplitudeIntervalRef = useRef<number | null>(null);
+
   const useStaticAnimation = IS_SAFARI || IS_IOS;
 
   const generateRandomAmplitudes = () =>
     Array(5).fill(0).map(() => Math.random() * 0.06);
 
-  const handleSubmit = async () => {
-    // ... logic same as before ...
-    const { input, prompt, voice } = appStore.getState();
+  const handlePlay = async () => {
+    // 1. Retrieve State Safely
+    const state = appStore.getState();
+    const selectedEntry = state.selectedEntry;
+    
+    // Explicitly cast to string to prevent "Converting circular structure to JSON"
+    const userText = typeof state.input === 'string' ? state.input : "";
+    const uiVoice = state.voice; // Retrieve selected UI voice
 
     if (audioLoading) return;
 
+    // Stop if already playing
     if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-        setAudioLoaded(false);
-        audioRef.current = null;
-        if (amplitudeIntervalRef.current) {
-          clearInterval(amplitudeIntervalRef.current);
-          amplitudeIntervalRef.current = null;
-        }
+      audioRef.current.pause();
+      audioRef.current = null;
+      setIsPlaying(false);
+      setAudioLoaded(false);
+      if (amplitudeIntervalRef.current) {
+        clearInterval(amplitudeIntervalRef.current);
+        amplitudeIntervalRef.current = null;
       }
       return;
     }
 
     setAudioLoading(true);
-    appStore.setState({ latestAudioUrl: null });
 
     try {
-      const url = new URL("/api/generate", window.location.origin);
-      url.searchParams.append("input", input);
-      url.searchParams.append("prompt", prompt);
-      url.searchParams.append("voice", voice);
-      url.searchParams.append("generation", safeUUID());
-      const audioUrl = url.toString();
-      appStore.setState({ latestAudioUrl: audioUrl });
+      /* =======================
+         GOOGLE TTS CALL
+         ======================= */
+      const res = await fetch("/api/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        body: JSON.stringify({
+          // Use selected vibe or fallback to 'Calm' if null
+          vibeName: selectedEntry?.name || "Calm",
+          // Pass the user's text script
+          text: userText,
+          // Pass the selected voice from UI
+          voice: uiVoice,
+        }),
+      });
 
-      if (amplitudeIntervalRef.current !== null) {
-        clearInterval(amplitudeIntervalRef.current);
-        amplitudeIntervalRef.current = null;
-      }
-      const audio = new Audio();
+      if (!res.ok) throw new Error("Google TTS failed");
+
+      const blob = await res.blob();
+      const audioUrl = URL.createObjectURL(blob);
+
+      const audio = new Audio(audioUrl);
       audio.preload = "none";
       audioRef.current = audio;
 
+      // --- Audio Context & Analysis (Visuals) ---
       if (!useStaticAnimation) {
         if (!audioContextRef.current) {
           audioContextRef.current = new AudioContext();
         }
         const ctx = audioContextRef.current;
-        const source = ctx.createMediaElementSource(audio);
-        const analyser = ctx.createAnalyser();
-        analyser.fftSize = 256;
-        source.connect(analyser);
-        analyser.connect(ctx.destination);
-        analyserRef.current = analyser;
+        try {
+            const source = ctx.createMediaElementSource(audio);
+            const analyser = ctx.createAnalyser();
+            analyser.fftSize = 256;
+            source.connect(analyser);
+            analyser.connect(ctx.destination);
+            analyserRef.current = analyser;
+        } catch(e) {
+            console.warn("Visualizer setup failed", e);
+        }
       }
 
       const sample = () => {
@@ -109,16 +131,19 @@ export default function PlayButton() {
         if (!analyserRef.current) return;
         const data = new Uint8Array(analyserRef.current.fftSize);
         analyserRef.current.getByteTimeDomainData(data);
-        const avg = data.reduce((sum, v) => sum + Math.abs(v - 128), 0) / analyserRef.current.fftSize;
-        const amp = avg / 128;
-        setAmplitudeLevels((prev) => [...prev.slice(1), amp]);
+        const avg =
+          data.reduce((sum, v) => sum + Math.abs(v - 128), 0) /
+          analyserRef.current.fftSize;
+        setAmplitudeLevels((prev) => [...prev.slice(1), avg / 128]);
       };
 
-      audio.onerror = () => {
-        setAudioLoading(false);
-        setAudioLoaded(false);
+      const clearSampling = () => {
+        audioRef.current = null;
+        if (amplitudeIntervalRef.current) {
+          clearInterval(amplitudeIntervalRef.current);
+          amplitudeIntervalRef.current = null;
+        }
         setIsPlaying(false);
-        alert("Error generating audio");
       };
 
       audio.onplay = () => {
@@ -128,50 +153,41 @@ export default function PlayButton() {
         setAudioLoading(false);
       };
 
-      const clearSampling = () => {
-        audioRef.current = null;
-        if (amplitudeIntervalRef.current !== null) {
-          clearInterval(amplitudeIntervalRef.current);
-          amplitudeIntervalRef.current = null;
-        }
-        setIsPlaying(false);
-      };
-
       audio.onpause = clearSampling;
       audio.onended = clearSampling;
+      audio.onerror = () => {
+          clearSampling();
+          setAudioLoading(false);
+          alert("Error playing audio");
+      };
+
       audio.autoplay = true;
-      audio.src = audioUrl;
+
     } catch (err) {
       console.error("Error generating speech:", err);
       setAudioLoading(false);
       setAudioLoaded(false);
       setIsPlaying(false);
+      alert("Failed to generate audio. Check console.");
     }
   };
 
   return (
     <Button
       color="primary"
-      onClick={handleSubmit}
+      onClick={handlePlay}
       selected={audioLoading || isPlaying}
       className="relative"
-      // 🟧 ORANGE BACKGROUND (Default), ⬜ WHITE TEXT (Forced)
-      style={{ color: '#ffffff' }}
+      style={{ color: "#ffffff" }}
     >
       {isPlaying ? (
-        <PlayingWaveform
-          audioLoaded={audioLoaded}
-          amplitudeLevels={amplitudeLevels}
-        />
+        <PlayingWaveform audioLoaded={audioLoaded} amplitudeLevels={amplitudeLevels} />
       ) : audioLoading ? (
-        <PlayingWaveform
-          audioLoaded={false}
-          amplitudeLevels={[0.032, 0.032, 0.032, 0.032, 0.032]}
-        />
+        <PlayingWaveform audioLoaded={false} amplitudeLevels={[0.03, 0.03, 0.03, 0.03, 0.03]} />
       ) : (
-        <span style={{ color: 'white' }}><Play /></span>
+        <span><Play /></span>
       )}
-      <span className="uppercase inline pr-3 text-white" style={{ color: 'white', fontWeight: 'bold' }}>
+      <span className="uppercase inline pr-3 font-bold">
         {isPlaying ? "Stop" : audioLoading ? "Busy" : "Play"}
       </span>
     </Button>

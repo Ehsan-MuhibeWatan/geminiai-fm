@@ -18,26 +18,19 @@ const enableGA =
   process.env.NEXT_PUBLIC_ENABLE_GA === "true";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: "OpenAI.fm",
+  title: "GeminiAI-FM | Unlimited Free TTS",
   description:
-    "An interactive demo for developers to try the new text-to-speech model in the OpenAI API",
-  authors: [{ name: "OpenAI" }],
+    "Generate human-like audio for free using Google Gemini 2.0 Flash & Neural2. No OpenAI API key required.",
+  metadataBase: new URL("https://myaifm.online"), // Agar aap ki domain yeh hai to
   openGraph: {
-    title: "OpenAI.fm",
+    title: "GeminiAI-FM | The Dirty Fast Engine",
     description:
-      "An interactive demo for developers to try the new text-to-speech model in the OpenAI API",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "OpenAI.fm, a text-to-speech demo",
-      },
-    ],
+      "Unlimited Free Text-to-Speech powered by Google Cloud. Zero cost, pure vibe.",
   },
   twitter: {
     card: "summary_large_image",
+    title: "GeminiAI-FM",
+    description: "Unlimited Free Text-to-Speech powered by Google Cloud.",
   },
 };
 
