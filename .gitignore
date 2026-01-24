@@ -7,3 +7,6 @@ google-cloud-credentials.json
 .env.local
 install.sh
 openai-fm-working.tar.gz
+service-account-key.json
+*.db
+share_links.db

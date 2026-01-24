@@ -12,8 +12,12 @@ const ttsClient = new TextToSpeechClient();
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || "");
 
 const LANGUAGE_VOICE_MAP: Record<string, { male: string; female: string }> = {
-  'ur': { female: 'ur-IN-Neural2-A', male: 'ur-IN-Neural2-D' },
-  'hi': { female: 'hi-IN-Neural2-A', male: 'hi-IN-Neural2-B' },
+  // Switched Urdu to Wavenet because Neural2-D is currently invalid
+  'ur': { female: 'ur-IN-Wavenet-A', male: 'ur-IN-Wavenet-B' }, 
+  
+  // Hindi Neural2-A/B are usually fine, but Wavenet is more stable across regions
+  'hi': { female: 'hi-IN-Wavenet-A', male: 'hi-IN-Wavenet-B' }, 
+  
   'ar': { female: 'ar-XA-Wavenet-A', male: 'ar-XA-Wavenet-B' },
   'es': { female: 'es-US-Neural2-A', male: 'es-US-Neural2-B' },
   'fr': { female: 'fr-FR-Neural2-A', male: 'fr-FR-Neural2-B' },
