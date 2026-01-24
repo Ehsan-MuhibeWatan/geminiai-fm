@@ -1,53 +1,7 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# env files
-.env*
-!.env.example
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# --- SECURITY & SENSITIVE FILES ---
-# Ignore all JSONs to be safe, but allow the critical ones
-*.json
-!package.json
-!package-lock.json
-!tsconfig.json
-!.eslintrc.json
-
-# Explicitly ignore the Key (Just to be 100% sure)
-service-account-key.json
+activity.db
+user_activity.jsonl
+openai-fm.tar.gz
+node_modules
+.next
+google-cloud-credentials.json
+.env.local

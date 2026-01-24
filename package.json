@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3000",
     "lint": "next lint"
   },
   "dependencies": {
@@ -23,7 +23,7 @@
     "@uiw/codemirror-theme-duotone": "^4.23.10",
     "@uiw/react-codemirror": "^4.23.10",
     "@vercel/postgres": "^0.10.0",
-    "better-sqlite3": "^12.5.0",
+    "better-sqlite3": "^12.6.2",
     "clsx": "^2.1.1",
     "immer": "^10.1.1",
     "lz-string": "^1.5.0",

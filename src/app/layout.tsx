@@ -10,27 +10,42 @@ const jetBrainsMono = JetBrains_Mono({
   preload: true,
 });
 
-// Public environment config (SAFE)
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-
-const enableGA =
-  process.env.NEXT_PUBLIC_ENABLE_GA === "true";
+// GA Toggle
+const enableGA = process.env.NEXT_PUBLIC_ENABLE_GA === "true";
 
 export const metadata: Metadata = {
-  title: "GeminiAI-FM | Unlimited Free TTS",
+  // 1. SEO Title & Description (The keywords you want to rank for)
+  title: "Voicely | Free Neural Text to Speech (Urdu, Hindi, English)",
   description:
-    "Generate human-like audio for free using Google Gemini 2.0 Flash & Neural2. No OpenAI API key required.",
-  metadataBase: new URL("https://myaifm.online"), // Agar aap ki domain yeh hai to
+    "Convert text to lifelike human speech using Google's Neural2 AI. The best free tool for content creators in Pakistan and India. Supports Urdu, Hindi, and English.",
+  
+  // 2. Search Keywords (What people type in Google)
+  keywords: ["Text to Speech", "Urdu TTS", "Hindi TTS", "Free AI Voice", "Neural2", "Voiceover Generator", "Pakistan AI"],
+  
+  // 3. Authorship
+  authors: [{ name: "Muhib-e-Watan Initiative", url: "https://muhibewatan.org" }],
+  
+  metadataBase: new URL("https://tryvoicely.com"),
+
+  // 4. Social Media Previews (WhatsApp/Twitter/Facebook cards)
   openGraph: {
-    title: "GeminiAI-FM | The Dirty Fast Engine",
-    description:
-      "Unlimited Free Text-to-Speech powered by Google Cloud. Zero cost, pure vibe.",
+    title: "Voicely - Turn Text into Reality",
+    description: "Create viral shorts with lifelike AI voices. Free & Fast.",
+    siteName: "Voicely",
+    type: "website",
+    locale: "en_US",
+    url: "https://tryvoicely.com",
   },
   twitter: {
     card: "summary_large_image",
-    title: "GeminiAI-FM",
+    title: "Voicely - Free AI Voice Generator",
     description: "Unlimited Free Text-to-Speech powered by Google Cloud.",
+  },
+
+  // 5. PWA Support (So users can install it as an App)
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/favicon.ico", 
   },
 };
 
@@ -42,7 +57,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Google Analytics (production only) */}
+        {/* Google Analytics (Only loads in Production) */}
         {enableGA && (
           <>
             <Script
