@@ -5,3 +5,5 @@ node_modules
 .next
 google-cloud-credentials.json
 .env.local
+install.sh
+openai-fm-working.tar.gz
